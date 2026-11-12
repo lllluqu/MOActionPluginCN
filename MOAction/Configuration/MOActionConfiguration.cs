@@ -24,7 +24,7 @@ public class MOActionConfiguration : IPluginConfiguration
 
     public bool RangeCheck;
 
-    public PluginLanguage Language = PluginLanguage.Auto;
+    public PluginLanguage Language { get; set; } = PluginLanguage.Auto;
 
     public MOActionConfiguration()
     {
