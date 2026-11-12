@@ -96,7 +96,7 @@ public partial class ConfigWindow
         {
             foreach (var c in Plugin.JobAbbreviations)
             {
-                var jobName = c.Abbreviation.ExtractText();
+                var jobName = JobNames.Get(c.Abbreviation.ExtractText());
                 var entries = Plugin.SavedStacks[c.RowId];
                 if (entries.Count == 0)
                     continue;
@@ -169,13 +169,13 @@ public partial class ConfigWindow
 
             // Require user to select a job, filtering actions down.
             ImGui.SetNextItemWidth(100);
-            using (var combo = ImRaii.Combo(Loc.T("Job"), entry.GetJobAbr()))
+            using (var combo = ImRaii.Combo(Loc.T("Job"), JobNames.Get(entry.GetJobAbr())))
             {
                 if (combo.Success)
                 {
                     foreach (var c in Plugin.JobAbbreviations)
                     {
-                        if (!ImGui.Selectable(c.Abbreviation.ExtractText()))
+                        if (!ImGui.Selectable(JobNames.Get(c.Abbreviation.ExtractText())))
                             continue;
 
                         var job = c.RowId;

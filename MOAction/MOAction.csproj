@@ -4,7 +4,7 @@
     <Product>MOActionPlugin</Product>
     <Description>This plugin allows for actions to be used on mouseover targets without a macro.</Description>
     <Copyright>Copyleft Infi, attick 2025 baybeeee</Copyright>
-    <Version>4.10.1.2</Version>
+    <Version>4.10.1.3</Version>
     <AssemblyName>MOActionCN</AssemblyName>
     <RootNamespace>MOAction</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
