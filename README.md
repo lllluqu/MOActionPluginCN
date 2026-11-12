@@ -1,4 +1,4 @@
-# MOAction (mo' comfy)
+﻿# MOAction (mo' comfy)
 This plugin removes the need to use macros for mouseover.   
 Thanks to attick, Alluneve, Meli and goat as always.
 
@@ -15,7 +15,7 @@ MOAction is a plugin to allow for abilities to be used while mousing over entiti
 ## 简体中文汉化版 / Chinese localization
 
 This fork (`lllluqu/MOActionPluginCN`) is a full Simplified Chinese localization of MOAction.
-It ships as **MOAction 汉化版** (`InternalName: MOActionCN`) and can be installed alongside the English original.
+It ships as **Mouseover Action CN** (`InternalName: MOActionCN`) and can be installed alongside the English original.
 
 - 安装源（聚合仓库，收录多个汉化插件）：`https://raw.githubusercontent.com/lllluqu/MyDalamudRepo/main/pluginmaster.json`
 - 语言：默认跟随客户端，可在 **`/mo` → 设置 → 语言** 切换「自动 / 简体中文 / English」。
