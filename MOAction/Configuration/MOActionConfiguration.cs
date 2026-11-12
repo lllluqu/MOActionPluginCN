@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Configuration;
 using Dalamud.Interface.Colors;
+using MOAction.Localization;
 
 namespace MOAction.Configuration;
 
@@ -22,6 +23,8 @@ public class MOActionConfiguration : IPluginConfiguration
     public Vector4 CrosshairCastColor = ImGuiColors.ParsedGreen;
 
     public bool RangeCheck;
+
+    public PluginLanguage Language = PluginLanguage.Auto;
 
     public MOActionConfiguration()
     {

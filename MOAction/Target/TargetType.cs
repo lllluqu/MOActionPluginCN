@@ -10,8 +10,11 @@ public abstract class TargetType(TargetType.PtrFunc function, string name, bool 
     public readonly string TargetName = name;
     public readonly bool ObjectNeeded = needsObject;
 
+    /// <summary>Translated name for UI only; <see cref="TargetName"/> stays the config key.</summary>
+    public string DisplayName => Localization.Loc.T(TargetName);
+
     public abstract IGameObject? GetTarget();
     public abstract bool IsTargetValid();
 
-    public override string ToString() => TargetName;
+    public override string ToString() => DisplayName;
 }

@@ -13,6 +13,7 @@ using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using MOAction.Windows;
 using MOAction.Windows.Config;
+using MOAction.Localization;
 
 using Action = Lumina.Excel.Sheets.Action;
 
@@ -53,19 +54,22 @@ public class Plugin : IDalamudPlugin
 
     public Plugin()
     {
+        var earlyConfig = PluginInterface.GetPluginConfig() as MOActionConfiguration ?? new MOActionConfiguration();
+        Loc.Initialize(earlyConfig.Language);
+
         CommandManager.AddHandler("/pmoaction", new CommandInfo(OnCommandDebugMouseover)
         {
-            HelpMessage = "Open a window to edit mouseover action settings.",
+            HelpMessage = Loc.T("Open a window to edit mouseover action settings."),
             ShowInHelp = true
         });
         CommandManager.AddHandler("/moaction", new CommandInfo(OnCommandDebugMouseover)
         {
-            HelpMessage = "Alias for /pmoaction.",
+            HelpMessage = Loc.T("Alias for /pmoaction."),
             ShowInHelp = true
         });
         CommandManager.AddHandler("/mo", new CommandInfo(OnCommandDebugMouseover)
         {
-            HelpMessage = "Alias for /pmoaction.",
+            HelpMessage = Loc.T("Alias for /pmoaction."),
             ShowInHelp = true
         });
 
@@ -117,6 +121,7 @@ public class Plugin : IDalamudPlugin
         }
 
         Configuration = config;
+        Loc.SetSetting(Configuration.Language);
         PluginLog.Information($"Loading in {Configuration.Stacks.Count} stacks.");
         SavedStacks = SortStacks(RebuildStacks(Configuration.Stacks));
         foreach (var (k, v) in SavedStacks)

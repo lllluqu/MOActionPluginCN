@@ -7,6 +7,7 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 using Lumina.Excel;
+using MOAction.Localization;
 
 // From: https://github.com/UnknownX7/Hypostasis/blob/master/ImGui/ExcelSheet.cs
 namespace MOAction.Windows;
@@ -54,7 +55,7 @@ public static class ExcelSheetSelector<T> where T : struct, IExcelRow<T>
             ImGui.SetKeyboardFocusHere(0);
         }
 
-        if (ImGui.InputTextWithHint("##ExcelSheetSearch", "Search", ref SheetSearchText, 128, ImGuiInputTextFlags.AutoSelectAll))
+        if (ImGui.InputTextWithHint("##ExcelSheetSearch", Loc.T("Search"), ref SheetSearchText, 128, ImGuiInputTextFlags.AutoSelectAll))
             FilteredSearchSheet = null;
 
         FilteredSearchSheet ??= filteredSheet.Where(s => searchPredicate(s, SheetSearchText)).ToArray();

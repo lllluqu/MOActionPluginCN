@@ -7,6 +7,7 @@ using Dalamud.Bindings.ImGui;
 using System.Collections.Generic;
 using System.Text;
 using MOAction.Configuration;
+using MOAction.Localization;
 using Newtonsoft.Json;
 using System.Linq;
 
@@ -28,7 +29,7 @@ public partial class ConfigWindow : Window, IDisposable
     private const float SeparatorPadding = 1.0f;
     private static float GetSeparatorPaddingHeight => SeparatorPadding * ImGuiHelpers.GlobalScale;
 
-    public ConfigWindow(Plugin plugin) : base("Action Stack Setup##MOAction")
+    public ConfigWindow(Plugin plugin) : base($"{Loc.T("Action Stack Setup")}##MOAction")
     {
         Plugin = plugin;
 
@@ -90,20 +91,20 @@ public partial class ConfigWindow : Window, IDisposable
                 Plugin.PluginLog.Warning("Importing configuration entry failed.");
                 Plugin.PluginLog.Warning($"Base64: {encoded}");
 
-                Plugin.Chat.PrintError("Error importing configuration entry.");
+                Plugin.Chat.PrintError(Loc.T("Error importing configuration entry."));
                 return;
             }
 
             var tempStacks = Plugin.SortStacks(Plugin.RebuildStacks(configEntries));
 
-            Plugin.Chat.Print("Imported stacks on base actions will never overwrite existing stacks and are thus not imported.", "MoAction", 0x1F);
+            Plugin.Chat.Print(Loc.T("Imported stacks on base actions will never overwrite existing stacks and are thus not imported."), "MoAction", 0x1F);
             foreach (var (classjob, v) in tempStacks)
             {
                 //no need to import if there's nothing to import for that specific classjob
                 if (v.Count > 0)
                 {
                     Plugin.PluginLog.Information("importing: {import}", v);
-                    Plugin.Chat.Print("importing for " + Sheets.ClassJobSheet.GetRow(classjob).Abbreviation.ExtractText() + ":\n" + string.Join("\n", v.Select(entry => $"[{entry}]")));
+                    Plugin.Chat.Print(Loc.T("importing for") + " " + Sheets.ClassJobSheet.GetRow(classjob).Abbreviation.ExtractText() + ":\n" + string.Join("\n", v.Select(entry => $"[{entry}]")));
                     if (Plugin.SavedStacks.TryGetValue(classjob, out var value))
                     {
                         //TODO: union currently ignores new stacks of baseactions already configured with any stack and does not do a deeper union on the lists within the stack

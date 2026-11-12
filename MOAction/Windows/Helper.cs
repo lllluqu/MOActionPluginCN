@@ -1,8 +1,9 @@
-using System.Numerics;
+﻿using System.Numerics;
 using Dalamud.Interface;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
+using MOAction.Localization;
 
 namespace MOAction.Windows;
 
@@ -71,7 +72,7 @@ public static class Helper
         ImGui.AlignTextToFramePadding();
         ImGui.TextUnformatted(name);
         ImGui.SameLine(spacing);
-        if (ImGui.Button($"Reset##{name}Reset"))
+        if (ImGui.Button($"{Loc.T("Reset")}##{name}Reset"))
         {
             current = reset;
             changed = true;

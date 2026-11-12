@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Interface;
@@ -8,6 +8,7 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Plugin.Services;
 using MOAction.Configuration;
+using MOAction.Localization;
 
 namespace MOAction.Windows.Config;
 
@@ -15,46 +16,73 @@ public partial class ConfigWindow
 {
     private Tabs Settings()
     {
-        using var tabItem = ImRaii.TabItem("Settings");
+        using var tabItem = ImRaii.TabItem(Loc.T("Settings"));
         if (!tabItem.Success)
             return Tabs.None;
 
-        ImGui.TextUnformatted("This window allows you to set up your action stacks.");
-        ImGui.TextUnformatted("What is an action stack? ");
+        ImGui.TextUnformatted(Loc.T("This window allows you to set up your action stacks."));
+
+        static string LanguageName(PluginLanguage language) => language switch
+        {
+            PluginLanguage.Chinese => "Simplified Chinese",
+            PluginLanguage.English => "English",
+            _ => "Auto (Follow Client)",
+        };
+
+        ImGui.SetNextItemWidth(200);
+        var currentLanguage = Plugin.Configuration.Language;
+        using (var languageCombo = ImRaii.Combo(Loc.T("Language"), Loc.T(LanguageName(currentLanguage))))
+        {
+            if (languageCombo.Success)
+            {
+                foreach (var language in new[] { PluginLanguage.Auto, PluginLanguage.Chinese, PluginLanguage.English })
+                {
+                    if (ImGui.Selectable(Loc.T(LanguageName(language)), language == currentLanguage))
+                    {
+                        Plugin.Configuration.Language = language;
+                        Loc.SetSetting(language);
+                        Plugin.PluginInterface.SavePluginConfig(Plugin.Configuration);
+                    }
+                }
+            }
+        }
+
+        ImGui.Separator();
+        ImGui.TextUnformatted(Loc.T("What is an action stack?"));
         ImGui.SameLine();
-        if (ImGui.Button("Click me to learn!"))
+        if (ImGui.Button(Loc.T("Click me to learn!")))
             Dalamud.Utility.Util.OpenLink("https://youtu.be/pm4eCxD90gs");
 
-        ImGui.Checkbox("Stack entry fails if target is out of range.", ref Plugin.Configuration.RangeCheck);
-        ImGui.TextUnformatted("MoAction Crosshair location (you'll have to draw it yourself with an overlay)");
+        ImGui.Checkbox(Loc.T("Stack entry fails if target is out of range."), ref Plugin.Configuration.RangeCheck);
+        ImGui.TextUnformatted(Loc.T("MoAction Crosshair location (you'll have to draw it yourself with an overlay)"));
         ImGui.SetNextItemWidth(100);
-        ImGui.InputInt("X-coordinate",ref Plugin.Configuration.CrosshairWidth);
+        ImGui.InputInt(Loc.T("X-coordinate"),ref Plugin.Configuration.CrosshairWidth);
         ImGui.SetNextItemWidth(100);
-        ImGui.InputInt("Y-coordinate",ref Plugin.Configuration.CrosshairHeight);
-        ImGui.Checkbox("Enable Crosshair Draw", ref Plugin.Configuration.DrawCrosshair);
+        ImGui.InputInt(Loc.T("Y-coordinate"),ref Plugin.Configuration.CrosshairHeight);
+        ImGui.Checkbox(Loc.T("Enable Crosshair Draw"), ref Plugin.Configuration.DrawCrosshair);
         if (Plugin.Configuration.DrawCrosshair)
         {
             using var indent = ImRaii.PushIndent(10.0f);
             ImGui.SetNextItemWidth(100);
-            ImGui.InputFloat("Size",ref Plugin.Configuration.CrosshairSize);
+            ImGui.InputFloat(Loc.T("Size"),ref Plugin.Configuration.CrosshairSize);
             ImGui.SetNextItemWidth(100);
-            ImGui.InputFloat("Thickness",ref Plugin.Configuration.CrosshairThickness);
+            ImGui.InputFloat(Loc.T("Thickness"),ref Plugin.Configuration.CrosshairThickness);
 
-            var spacing = ImGui.CalcTextSize("Target Acquired").X + (ImGui.GetFrameHeightWithSpacing() * 2);
-            Helper.ColorPickerWithReset("No Target", ref Plugin.Configuration.CrosshairInvalidColor, ImGuiColors.DalamudRed, spacing);
-            Helper.ColorPickerWithReset("Target Acquired", ref Plugin.Configuration.CrosshairValidColor, ImGuiColors.DalamudOrange, spacing);
-            Helper.ColorPickerWithReset("Target Locked", ref Plugin.Configuration.CrosshairCastColor, ImGuiColors.ParsedGreen, spacing);
+            var spacing = ImGui.CalcTextSize(Loc.T("Target Acquired")).X + (ImGui.GetFrameHeightWithSpacing() * 2);
+            Helper.ColorPickerWithReset(Loc.T("No Target"), ref Plugin.Configuration.CrosshairInvalidColor, ImGuiColors.DalamudRed, spacing);
+            Helper.ColorPickerWithReset(Loc.T("Target Acquired"), ref Plugin.Configuration.CrosshairValidColor, ImGuiColors.DalamudOrange, spacing);
+            Helper.ColorPickerWithReset(Loc.T("Target Locked"), ref Plugin.Configuration.CrosshairCastColor, ImGuiColors.ParsedGreen, spacing);
         }
 
         ImGui.Spacing();
         ImGui.Separator();
         ImGui.Spacing();
 
-        if (ImGui.Button("Copy all stacks to clipboard"))
+        if (ImGui.Button(Loc.T("Copy all stacks to clipboard")))
             Plugin.CopyToClipboard(Plugin.MoAction.Stacks);
 
         ImGui.SameLine();
-        if (ImGui.Button("Import stacks from clipboard"))
+        if (ImGui.Button(Loc.T("Import stacks from clipboard")))
         {
             ImportStringToMouseOverActions(ImGui.GetClipboardText());
         }
@@ -77,7 +105,7 @@ public partial class ConfigWindow
                 ImGui.SetNextItemWidth(300);
                 if (ImGui.CollapsingHeader(jobName))
                 {
-                    if (ImGui.Button("Copy All to Clipboard"))
+                    if (ImGui.Button(Loc.T("Copy All to Clipboard")))
                         Plugin.CopyToClipboard(entries.ToList());
 
                     using var indent = ImRaii.PushIndent();
@@ -97,20 +125,20 @@ public partial class ConfigWindow
 
     private void DrawSettingsButtons()
     {
-        if (ImGui.Button("Save"))
+        if (ImGui.Button(Loc.T("Save")))
         {
             Plugin.SaveStacks();
         }
 
         ImGui.SameLine();
-        if (ImGui.Button("Save and Close"))
+        if (ImGui.Button(Loc.T("Save and Close")))
         {
             IsOpen = false;
             Plugin.SaveStacks();
         }
 
         ImGui.SameLine();
-        if (ImGui.Button("New Stack"))
+        if (ImGui.Button(Loc.T("New Stack")))
         {
             if (Plugin.PlayerState.IsLoaded)
             {
@@ -133,15 +161,15 @@ public partial class ConfigWindow
         for (var i = 0; i < list.Count; i++)
         {
             using var id = ImRaii.PushId(i);
-            var targetComboLength = ImGui.CalcTextSize("Target of Target   ").X + ImGui.GetFrameHeightWithSpacing();
+            var targetComboLength = ImGui.CalcTextSize(Loc.T("Target of Target") + "   ").X + ImGui.GetFrameHeightWithSpacing();
 
             var entry = list.ElementAt(i);
-            if (!ImGui.CollapsingHeader(entry.BaseAction.RowId == 0 ? "Unset Action###" : $"{entry.BaseAction.Name.ExtractText()}###"))
+            if (!ImGui.CollapsingHeader(entry.BaseAction.RowId == 0 ? Loc.T("Unset Action") + "###" : $"{entry.BaseAction.Name.ExtractText()}###"))
                 continue;
 
             // Require user to select a job, filtering actions down.
             ImGui.SetNextItemWidth(100);
-            using (var combo = ImRaii.Combo("Job", entry.GetJobAbr()))
+            using (var combo = ImRaii.Combo(Loc.T("Job"), entry.GetJobAbr()))
             {
                 if (combo.Success)
                 {
@@ -165,7 +193,7 @@ public partial class ConfigWindow
 
             ImGui.SameLine();
             ImGui.SetNextItemWidth(100);
-            using (var combo = ImRaii.Combo("Held Modifier Key", entry.Modifier.ToString()))
+            using (var combo = ImRaii.Combo(Loc.T("Held Modifier Key"), entry.Modifier.ToString()))
             {
                 if (combo.Success)
                 {
@@ -187,7 +215,7 @@ public partial class ConfigWindow
                 // Select base action.
                 ImGui.SetNextItemWidth(200);
                 var baseSelected = entry.BaseAction.RowId;
-                if (ExcelSheetSelector<Lumina.Excel.Sheets.Action>.ExcelSheetCombo("Base Action", ref baseSelected, entry.Job, actionOptions))
+                if (ExcelSheetSelector<Lumina.Excel.Sheets.Action>.ExcelSheetCombo(Loc.T("Base Action"), ref baseSelected, entry.Job, actionOptions))
                 {
                     var ability = Sheets.ActionSheet.GetRow(baseSelected);
 
@@ -214,12 +242,12 @@ public partial class ConfigWindow
                         ImGui.TextUnformatted($"#{entry.Entries.IndexOf(stackEntry) + 1}");
                         ImGui.SameLine();
                         ImGui.SetNextItemWidth(targetComboLength);
-                        using (var innerCombo = ImRaii.Combo("Target", stackEntry.Target == null ? "" : stackEntry.Target.TargetName))
+                        using (var innerCombo = ImRaii.Combo(Loc.T("Target"), stackEntry.Target == null ? "" : stackEntry.Target.DisplayName))
                         {
                             if (innerCombo.Success)
                             {
                                 foreach (var target in stackEntry.Action.TargetArea ? Plugin.TargetTypes.Append(Plugin.GroundTargetTypes) : Plugin.TargetTypes)
-                                    if (ImGui.Selectable(target.TargetName))
+                                    if (ImGui.Selectable(target.DisplayName))
                                         stackEntry.Target = target;
                             }
                         }
@@ -227,7 +255,7 @@ public partial class ConfigWindow
                         ImGui.SameLine();
                         ImGui.SetNextItemWidth(200);
                         var selected = stackEntry.Action.RowId;
-                        if (ExcelSheetSelector<Lumina.Excel.Sheets.Action>.ExcelSheetCombo("Ability", ref selected, entry.Job, actionOptions))
+                        if (ExcelSheetSelector<Lumina.Excel.Sheets.Action>.ExcelSheetCombo(Loc.T("Ability"), ref selected, entry.Job, actionOptions))
                         {
                             var ability = Sheets.ActionSheet.GetRow(selected);
 
@@ -257,15 +285,15 @@ public partial class ConfigWindow
                 }
 
                 // Add new entry to bottom of stack.
-                if (ImGui.Button("Add new stack entry"))
+                if (ImGui.Button(Loc.T("Add new stack entry")))
                     entry.Entries.Add(new StackEntry(entry.BaseAction, null));
 
                 ImGui.SameLine();
-                if (ImGui.Button("Copy stack to clipboard"))
+                if (ImGui.Button(Loc.T("Copy stack to clipboard")))
                     Plugin.CopyToClipboard([entry]);
 
                 ImGui.SameLine();
-                if (Helper.CtrlShiftButton("Delete Stack", "Hold Ctrl+Shift to delete the stack."))
+                if (Helper.CtrlShiftButton(Loc.T("Delete Stack"), Loc.T("Hold Ctrl+Shift to delete the stack.")))
                 {
                     list.Remove(entry);
                     Plugin.SavedStacks[entry.Job].Remove(entry);

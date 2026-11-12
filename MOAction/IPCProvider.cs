@@ -13,7 +13,7 @@ public static class IPCProvider
     {
         Plugin = plugin;
 
-        MethodRetargetedActions = pluginInterface.GetIpcProvider<uint[]>("MOAction.RetargetedActions");
+        MethodRetargetedActions = pluginInterface.GetIpcProvider<uint[]>("MOActionCN.RetargetedActions");
         MethodRetargetedActions.RegisterFunc(GetRetargetedActions);
     }
 
